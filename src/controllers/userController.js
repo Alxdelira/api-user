@@ -5,11 +5,12 @@ export default class userController {
 
     static async createUser(req, res) {
         try {
-            const { name, email, password } = req.body;
+            const { name, email, password, ativo } = req.body;
             const newUser = new User({
                 name,
                 email,
-                password
+                password,
+                ativo
             });
 
             if (!name || !email || !password) {
