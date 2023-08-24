@@ -5,13 +5,14 @@ export default class userController {
 
     static async createUser(req, res) {
         try {
+            const { name, email, password } = req.body;
             const newUser = new User({
-                nome,
+                name,
                 email,
                 password
             });
 
-            if (!nome || !email || !password) {
+            if (!name || !email || !password) {
                 return res.status(400).json({ message: 'Dados obrigatórios faltando!' });
             }
             if (await User.findOne({ email })) {
@@ -25,22 +26,21 @@ export default class userController {
 
             res.status(201).json({ message: "Usuário criado com sucesso!", newUser });
         } catch (error) {
+            console.log(error);
             res.status(500).json({ error: true, code: 500, message: 'Erro Interno no Servidor!' });
         }
     }
 
     static async getUsers(req, res) {
         try {
-            const { nome, email, ativo } = req.query;
+            const { name, email, ativo, page, perPage } = req.query;
             const options = {
                 page: parseInt(page) || 1,
                 limit: parseInt(perPage) > 10 ? 10 : parseInt(perPage) || 10,
-                populate: 'user',
-                sort: '-createdAt'
             };
             const users = await User.paginate({
-                nome: {
-                    $regex: nome || '',
+                name: {
+                    $regex: name || '',
                     $options: 'i'
                 },
                 email: {
@@ -56,6 +56,7 @@ export default class userController {
 
             res.status(200).json(users);
         } catch (error) {
+            console.log(error);
             res.status(500).json({ message: 'Erro Interno no Servidor!' });
         }
     }
@@ -78,12 +79,12 @@ export default class userController {
     static async updateUser(req, res) {
         try {
             const { id } = req.params;
-            const { nome, email, password, ativo } = req.body;
+            const { name, email, password, ativo } = req.body;
 
             const newUpdateUser = await findByIdAndUpdate(
                 id,
                 {
-                    nome,
+                    name,
                     email,
                     password,
                     ativo
@@ -95,7 +96,7 @@ export default class userController {
                 return res.status(404).json({ message: 'Usuario não encontrado!' });
             }
 
-            if (!newUpdateUser.nome || !newUpdateUser.email || !newUpdateUser.password || !newUpdateUser.ativo) {
+            if (!newUpdateUser.name || !newUpdateUser.email || !newUpdateUser.password || !newUpdateUser.ativo) {
                 return res.status(400).json({ message: 'Dados obrigatórios faltando!' });
             }
 
