@@ -80,14 +80,13 @@ export default class userController {
     static async updateUser(req, res) {
         try {
             const { id } = req.params;
-            const { name, email, password, ativo } = req.body;
+            const { name, email, ativo } = req.body;
 
-            const newUpdateUser = await findByIdAndUpdate(
+            const newUpdateUser = await User.findByIdAndUpdate(
                 id,
                 {
                     name,
                     email,
-                    password,
                     ativo
                 },
                 { new: true }
@@ -97,12 +96,14 @@ export default class userController {
                 return res.status(404).json({ message: 'Usuario não encontrado!' });
             }
 
-            if (!newUpdateUser.name || !newUpdateUser.email || !newUpdateUser.password || !newUpdateUser.ativo) {
+            if (!newUpdateUser.name || !newUpdateUser.email ) {
                 return res.status(400).json({ message: 'Dados obrigatórios faltando!' });
             }
 
-            res.status(200).json({ message: 'Usuário atualizado com sucesso!', newUpdateUser });
+            res.status(200).json(newUpdateUser);
+            console.log(newUpdateUser)
         } catch (error) {
+            console.log(error)
             res.status(500).json({ message: 'Erro Interno no Servidor!' });
         }
     }
